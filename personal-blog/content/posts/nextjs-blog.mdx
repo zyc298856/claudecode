@@ -1,0 +1,33 @@
+---
+title: "用 Next.js 搭建个人博客"
+date: "2026-03-31"
+category: "前端"
+tags: ["nextjs", "react", "博客"]
+description: "从零开始用 Next.js App Router 搭建一个支持 MDX 的技术博客。"
+draft: false
+---
+
+## 为什么选择 Next.js
+
+Next.js 提供了以下优势：
+
+1. **静态生成 (SSG)** — 博客页面在构建时生成，加载极快
+2. **App Router** — 基于 React Server Components 的新路由系统
+3. **MDX 支持** — 可以在 Markdown 中使用 React 组件
+
+## 项目结构
+
+```bash
+app/
+  posts/
+    [slug]/page.tsx
+  layout.tsx
+lib/
+  posts.ts
+content/
+  posts/*.mdx
+```
+
+## 下一步
+
+接下来我会添加分类、标签和搜索功能。
