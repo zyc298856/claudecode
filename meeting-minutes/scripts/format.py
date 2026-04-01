@@ -51,14 +51,18 @@ def parse_time_vtt(time_str: str) -> str:
     """将 VTT 时间格式转为可读格式。
 
     Args:
-        time_str: VTT 时间戳，如 "00:12:34.567"
+        time_str: VTT 时间戳，如 "00:12:34.567" 或 "12:34.567"
 
     Returns:
         可读时间字符串，如 "00:12:34"
     """
-    match = re.match(r"(\d{2}):(\d{2}):(\d{2})", time_str.strip())
+    match = re.match(r"(\d{1,2}):(\d{2}):(\d{2})", time_str.strip())
     if match:
-        return f"{match.group(1)}:{match.group(2)}:{match.group(3)}"
+        return f"{match.group(1).zfill(2)}:{match.group(2)}:{match.group(3)}"
+    # MM:SS.mmm 格式，补全为 HH:MM:SS
+    match = re.match(r"(\d{1,2}):(\d{2})", time_str.strip())
+    if match:
+        return f"00:{match.group(1).zfill(2)}:{match.group(2)}"
     return time_str
 
 
@@ -135,7 +139,7 @@ def parse_vtt(content: str) -> list:
                 break
 
         time_match = re.match(
-            r"(\d{2}:\d{2}:\d{2}[\.,]\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2}[\.,]\d{3})",
+            r"(\d{1,2}:\d{2}(?::\d{2})?[\.,]\d{3})\s*-->\s*(\d{1,2}:\d{2}(?::\d{2})?[\.,]\d{3})",
             lines[time_line_idx].strip()
         )
         if not time_match:
@@ -371,8 +375,15 @@ if __name__ == "__main__":
     content = input_path.read_text(encoding="utf-8")
     parsed = parse_input(content)
 
+    meeting = MeetingInfo(
+        title=input_path.stem,
+        date="待确认",
+        topics=[{"title": "会议内容", "discussion": [parsed]}],
+    )
+    result = generate_markdown(meeting)
+
     if output_file:
-        saved_path = save_markdown(parsed, output_file)
+        saved_path = save_markdown(result, output_file)
         print(f"已保存到: {saved_path}")
     else:
-        print(parsed)
+        print(result)

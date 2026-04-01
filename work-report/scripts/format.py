@@ -174,7 +174,15 @@ def generate_daily_markdown(report: ReportInfo) -> str:
     parts.append("")
     if report.plans:
         for plan in report.plans:
-            parts.append(f"- {plan}")
+            if isinstance(plan, str):
+                parts.append(f"- {plan}")
+            else:
+                desc = plan.get("description", str(plan))
+                module = plan.get("module", "")
+                if module:
+                    parts.append(f"- {desc}（{module}）")
+                else:
+                    parts.append(f"- {desc}")
     else:
         parts.append("- 待规划")
     parts.append("")
