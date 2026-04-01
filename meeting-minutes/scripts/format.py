@@ -375,10 +375,13 @@ if __name__ == "__main__":
     content = input_path.read_text(encoding="utf-8")
     parsed = parse_input(content)
 
+    discussion_points = [
+        line.strip() for line in parsed.split("\n") if line.strip()
+    ]
     meeting = MeetingInfo(
         title=input_path.stem,
         date="待确认",
-        topics=[{"title": "会议内容", "discussion": [parsed]}],
+        topics=[{"title": "会议内容", "discussion": discussion_points}],
     )
     result = generate_markdown(meeting)
 
