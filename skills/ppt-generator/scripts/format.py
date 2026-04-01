@@ -133,8 +133,9 @@ def detect_input_type(content: str) -> str:
     if len(stripped) < 100 and not re.search(r"^[\-\*\d]", stripped, re.MULTILINE):
         return "topic"
 
-    # 包含列表标记 → 大纲
-    if re.search(r"^[\-\*]\s", stripped, re.MULTILINE) or re.search(r"^\d+[.、)]\s", stripped, re.MULTILINE):
+    # 包含列表标记 → 大纲（支持全角括号 1）、中文顿号 1、及无空格情况）
+    if (re.search(r"^[\-\*]\s", stripped, re.MULTILINE)
+            or re.search(r"^\d+[.、)）]\s*", stripped, re.MULTILINE)):
         return "outline"
 
     # 长文本，段落式 → 长文档
@@ -408,8 +409,11 @@ if __name__ == "__main__":
     lines = [l.strip() for l in processed.split("\n") if l.strip()]
     title = lines[0] if lines else "待确认"
 
-    # 解析内容为幻灯片
-    bullets = [line.lstrip("- *0123456789.、)") for line in lines[1:] if line.strip()]
+    # 解析内容为幻灯片（仅移除列表前缀，保留数字内容如 "2025 roadmap"）
+    def strip_list_prefix(line: str) -> str:
+        return re.sub(r"^[\-\*]\s+", "", re.sub(r"^\d+[.、)）]\s*", "", line))
+
+    bullets = [strip_list_prefix(line) for line in lines[1:] if line.strip()]
 
     slides = []
     for i, bullet in enumerate(bullets[:target - 2], 2):  # 保留首页和末页
@@ -422,6 +426,25 @@ if __name__ == "__main__":
 
     # 添加首页
     slides.insert(0, SlideContent(number=1, title=title, section=""))
+
+    # 补充 Q&A 末页，确保页数与 target_count 一致
+    en = lang == "en"
+    qa_title = "Q & A" if en else "Q & A"
+    qa_bullets = [
+        ("Thank you" if en else "感谢聆听"),
+        ("Questions welcome" if en else "欢迎提问"),
+    ]
+    slides.append(SlideContent(
+        number=len(slides) + 1,
+        title=qa_title,
+        bullets=qa_bullets,
+        section="",
+    ))
+
+    # 确保实际页数不超过 target_count
+    if len(slides) > target:
+        slides = slides[:target - 1] + [slides[-1]]  # 保留末页 Q&A
+    slides = reindex_slides(slides)
 
     presentation = PresentationInfo(
         pres_type=detected_type,
