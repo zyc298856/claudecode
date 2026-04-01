@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "type": "skill",
+  "name": "meeting-minutes",
+  "name_cn": "会议纪要生成器",
+  "description": "将会议录音转写文本或纯文本会议记录整理为结构化的 Markdown 会议纪要。支持 SRT/VTT 字幕和纯文本输入，自动提取参会人、议题、决议和待办事项。",
+  "tags": [
+    "办公效率",
+    "文档处理",
+    "会议纪要"
+  ],
+  "version": "1.0.0",
+  "author": "丁雨薇"
+}

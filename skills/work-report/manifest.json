@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "type": "skill",
+  "name": "work-report",
+  "name_cn": "工作报告生成器",
+  "description": "将散乱的工作记录整理为结构化的日报或周报。自动识别输入内容，生成分层清晰、重点突出的 Markdown 工作报告。",
+  "tags": [
+    "办公效率",
+    "文档处理",
+    "工作报告"
+  ],
+  "version": "1.0.0",
+  "author": "丁雨薇"
+}
