@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "type": "skill",
+  "name": "ppt-generator",
+  "name_cn": "PPT大纲生成器",
+  "description": "将文本内容或大纲转换为结构化的 Markdown 格式 PPT 大纲。自动识别演示类型（提案、发布、复盘、培训、技术分享等），生成逐页幻灯片结构、演讲者备注和设计建议。",
+  "tags": [
+    "办公效率",
+    "文档处理",
+    "PPT",
+    "演示文稿"
+  ],
+  "version": "1.0.0",
+  "author": "丁雨薇"
+}
