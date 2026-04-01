@@ -40,6 +40,7 @@ class ReportInfo:
     achievements: list = field(default_factory=list)     # 关键成果
     problems: list = field(default_factory=list)         # 问题与风险
     plans: list = field(default_factory=list)            # 下一步计划
+    lang: str = "zh"  # "zh" 或 "en"
 
 
 def detect_report_type(content: str, explicit_type: str = "") -> str:
@@ -91,23 +92,28 @@ def preprocess_text(content: str) -> str:
     return content.strip()
 
 
-def _get_date_label(report_type: str) -> str:
+def _get_date_label(report_type: str, lang: str = "zh") -> str:
     """获取日期标签字符串。
 
     Args:
         report_type: "daily" 或 "weekly"
+        lang: "zh" 或 "en"
 
     Returns:
         格式化的日期字符串
     """
     today = datetime.now()
+    en = lang == "en"
     if report_type == "daily":
+        if en:
+            return today.strftime("%B %d, %Y")
         return f"{today.year}年{today.month}月{today.day}日"
     else:
-        # 周报默认显示本周范围（周一到周日）
         weekday = today.weekday()
         monday = today - timedelta(days=weekday)
         sunday = today + timedelta(days=6 - weekday)
+        if en:
+            return f"{monday.strftime('%b %d')} - {sunday.strftime('%b %d, %Y')}"
         return f"{monday.month}月{monday.day}日 - {sunday.month}月{sunday.day}日"
 
 
@@ -120,17 +126,33 @@ def generate_daily_markdown(report: ReportInfo) -> str:
     Returns:
         Markdown 格式的日报
     """
-    date_label = report.date or _get_date_label("daily")
+    lang = report.lang
+    en = lang == "en"
+    tbd = "TBD" if en else "待确认"
+
+    date_label = report.date or _get_date_label("daily", lang)
+
+    labels = {
+        "title": "Daily Report" if en else "工作日报",
+        "name": "**Name**" if en else "**姓名**",
+        "dept": "**Department**" if en else "**部门**",
+        "completed": "Completed Today" if en else "今日完成",
+        "issues": "Issues" if en else "遇到问题",
+        "plans": "Plans for Tomorrow" if en else "明日计划",
+        "pending": "- To be organized" if en else "- 待整理",
+        "no_plans": "- To be planned" if en else "- 待规划",
+        "footer": "> This report was AI-assisted." if en else "> 本报告由 AI 辅助整理。",
+    }
 
     parts = [
-        f"# 工作日报：{date_label}",
+        f"# {labels['title']}：{date_label}",
         "",
     ]
 
     if report.author:
-        parts.append(f"**姓名**：{report.author}")
+        parts.append(f"{labels['name']}：{report.author}")
     if report.department:
-        parts.append(f"**部门**：{report.department}")
+        parts.append(f"{labels['dept']}：{report.department}")
 
     if report.author or report.department:
         parts.append("")
@@ -139,7 +161,7 @@ def generate_daily_markdown(report: ReportInfo) -> str:
     parts.append("")
 
     # 今日完成
-    parts.append("## 今日完成")
+    parts.append(f"## {labels['completed']}")
     parts.append("")
     if report.items:
         for item in report.items:
@@ -147,18 +169,18 @@ def generate_daily_markdown(report: ReportInfo) -> str:
                 parts.append(f"- {item}")
             else:
                 module = item.get("module", "")
-                desc = item.get("description", "待确认")
+                desc = item.get("description", tbd)
                 if module:
                     parts.append(f"- {desc}（{module}）")
                 else:
                     parts.append(f"- {desc}")
     else:
-        parts.append("- 待整理")
+        parts.append(labels["pending"])
     parts.append("")
 
     # 遇到问题（仅在有内容时包含）
     if report.problems:
-        parts.append("## 遇到问题")
+        parts.append(f"## {labels['issues']}")
         parts.append("")
         for problem in report.problems:
             if isinstance(problem, str):
@@ -170,7 +192,7 @@ def generate_daily_markdown(report: ReportInfo) -> str:
         parts.append("")
 
     # 明日计划
-    parts.append("## 明日计划")
+    parts.append(f"## {labels['plans']}")
     parts.append("")
     if report.plans:
         for plan in report.plans:
@@ -184,12 +206,12 @@ def generate_daily_markdown(report: ReportInfo) -> str:
                 else:
                     parts.append(f"- {desc}")
     else:
-        parts.append("- 待规划")
+        parts.append(labels["no_plans"])
     parts.append("")
 
     parts.append("---")
     parts.append("")
-    parts.append("> 本报告由 AI 辅助整理。")
+    parts.append(labels["footer"])
 
     return "\n".join(parts)
 
@@ -203,17 +225,39 @@ def generate_weekly_markdown(report: ReportInfo) -> str:
     Returns:
         Markdown 格式的周报
     """
-    date_label = report.date or _get_date_label("weekly")
+    lang = report.lang
+    en = lang == "en"
+    tbd = "TBD" if en else "待确认"
+
+    date_label = report.date or _get_date_label("weekly", lang)
+
+    labels = {
+        "title": "Weekly Report" if en else "工作周报",
+        "name": "**Name**" if en else "**姓名**",
+        "dept": "**Department**" if en else "**部门**",
+        "summary": "Weekly Summary" if en else "本周总结",
+        "uncategorized": "Uncategorized" if en else "未分类",
+        "achievements": "Key Achievements" if en else "关键成果",
+        "risks": "Issues & Risks" if en else "问题与风险",
+        "problem": "Problem" if en else "问题描述",
+        "impact": "Impact" if en else "影响范围",
+        "status": "Status" if en else "当前状态",
+        "assess": "TBD" if en else "待评估",
+        "in_progress": "In Progress" if en else "进行中",
+        "next_plans": "Plans for Next Week" if en else "下周计划",
+        "no_plans": "- To be planned" if en else "- 待规划",
+        "footer": "> This report was AI-assisted." if en else "> 本报告由 AI 辅助整理。",
+    }
 
     parts = [
-        f"# 工作周报：{date_label}",
+        f"# {labels['title']}：{date_label}",
         "",
     ]
 
     if report.author:
-        parts.append(f"**姓名**：{report.author}")
+        parts.append(f"{labels['name']}：{report.author}")
     if report.department:
-        parts.append(f"**部门**：{report.department}")
+        parts.append(f"{labels['dept']}：{report.department}")
 
     if report.author or report.department:
         parts.append("")
@@ -222,28 +266,27 @@ def generate_weekly_markdown(report: ReportInfo) -> str:
     parts.append("")
 
     # 本周总结（按项目/模块分组）
-    parts.append("## 本周总结")
+    parts.append(f"## {labels['summary']}")
     parts.append("")
     if report.groups:
         for group in report.groups:
-            group_name = group.get("name", "未分类")
+            group_name = group.get("name", labels["uncategorized"])
             group_items = group.get("items", [])
             parts.append(f"### {group_name}")
             parts.append("")
             for item in group_items:
-                desc = item if isinstance(item, str) else item.get("description", "待确认")
+                desc = item if isinstance(item, str) else item.get("description", tbd)
                 parts.append(f"- {desc}")
             parts.append("")
     elif report.items:
-        # 未分组时，按事项列表输出
         for item in report.items:
-            desc = item if isinstance(item, str) else item.get("description", "待确认")
+            desc = item if isinstance(item, str) else item.get("description", tbd)
             parts.append(f"- {desc}")
         parts.append("")
 
     # 关键成果
     if report.achievements:
-        parts.append("## 关键成果")
+        parts.append(f"## {labels['achievements']}")
         parts.append("")
         for achievement in report.achievements:
             parts.append(f"- {achievement}")
@@ -251,24 +294,24 @@ def generate_weekly_markdown(report: ReportInfo) -> str:
 
     # 问题与风险
     if report.problems:
-        parts.append("## 问题与风险")
+        parts.append(f"## {labels['risks']}")
         parts.append("")
-        parts.append("| # | 问题描述 | 影响范围 | 当前状态 |")
+        parts.append(f"| # | {labels['problem']} | {labels['impact']} | {labels['status']} |")
         parts.append("|---|---------|---------|---------|")
         for i, problem in enumerate(report.problems, 1):
             if isinstance(problem, dict):
-                desc = problem.get("description", "待确认")
-                impact = problem.get("impact", "待评估")
-                status = problem.get("status", "进行中")
+                desc = problem.get("description", tbd)
+                impact = problem.get("impact", labels["assess"])
+                status = problem.get("status", labels["in_progress"])
             else:
                 desc = str(problem)
-                impact = "待评估"
-                status = "进行中"
+                impact = labels["assess"]
+                status = labels["in_progress"]
             parts.append(f"| {i} | {desc} | {impact} | {status} |")
         parts.append("")
 
     # 下周计划
-    parts.append("## 下周计划")
+    parts.append(f"## {labels['next_plans']}")
     parts.append("")
     if report.plans:
         for plan in report.plans:
@@ -282,12 +325,12 @@ def generate_weekly_markdown(report: ReportInfo) -> str:
             else:
                 parts.append(f"- {plan}")
     else:
-        parts.append("- 待规划")
+        parts.append(labels["no_plans"])
     parts.append("")
 
     parts.append("---")
     parts.append("")
-    parts.append("> 本报告由 AI 辅助整理。")
+    parts.append(labels["footer"])
 
     return "\n".join(parts)
 

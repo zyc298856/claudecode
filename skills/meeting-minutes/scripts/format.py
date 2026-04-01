@@ -30,6 +30,7 @@ class MeetingInfo:
     recorder: str = "待确认"
     topics: list = field(default_factory=list)
     action_items: list = field(default_factory=list)
+    lang: str = "zh"  # "zh" 或 "en"
 
 
 def parse_time_srt(time_str: str) -> str:
@@ -259,31 +260,57 @@ def generate_markdown(meeting: MeetingInfo) -> str:
     Returns:
         Markdown 格式的会议纪要
     """
-    attendees_str = "、".join(meeting.attendees) if meeting.attendees else "待确认"
+    lang = meeting.lang
+    en = lang == "en"
+
+    attendees_str = (
+        ", ".join(meeting.attendees) if en
+        else "、".join(meeting.attendees)
+    ) if meeting.attendees else ("TBD" if en else "待确认")
+
+    tbd = "TBD" if en else "待确认"
+    unassigned = "Unassigned" if en else "待分配"
+
+    labels = {
+        "title": "Meeting Minutes" if en else "会议纪要",
+        "date": "**Date**" if en else "**日期**",
+        "attendees": "**Attendees**" if en else "**参会人**",
+        "recorder": "**Recorder**" if en else "**记录人**",
+        "topic": "Topic" if en else "议题",
+        "unnamed": "Untitled Topic" if en else "未命名议题",
+        "discussion": "Discussion Points" if en else "讨论要点",
+        "decisions": "Decisions" if en else "决议",
+        "actions": "Action Items" if en else "待办事项",
+        "task": "Task" if en else "任务",
+        "owner": "Owner" if en else "责任人",
+        "deadline": "Deadline" if en else "截止日期",
+        "footer": "> These minutes were AI-assisted. Attendees should review for accuracy." if en
+                  else "> 本纪要由 AI 辅助整理，如有遗漏或误述请参会人员及时修正。",
+    }
 
     parts = [
-        f"# 会议纪要：{meeting.title}",
+        f"# {labels['title']}：{meeting.title}",
         "",
-        f"**日期**：{meeting.date}",
-        f"**参会人**：{attendees_str}",
-        f"**记录人**：{meeting.recorder}",
+        f"{labels['date']}：{meeting.date}",
+        f"{labels['attendees']}：{attendees_str}",
+        f"{labels['recorder']}：{meeting.recorder}",
         "",
         "---",
     ]
 
     for i, topic in enumerate(meeting.topics, 1):
-        parts.append(f"## 议题{i}：{topic.get('title', '未命名议题')}")
+        parts.append(f"## {labels['topic']}{i}：{topic.get('title', labels['unnamed'])}")
         parts.append("")
 
         if topic.get("discussion"):
-            parts.append("### 讨论要点")
+            parts.append(f"### {labels['discussion']}")
             parts.append("")
             for point in topic["discussion"]:
                 parts.append(f"- {point}")
             parts.append("")
 
         if topic.get("decisions"):
-            parts.append("### 决议")
+            parts.append(f"### {labels['decisions']}")
             parts.append("")
             for j, decision in enumerate(topic["decisions"], 1):
                 parts.append(f"{j}. {decision}")
@@ -293,20 +320,20 @@ def generate_markdown(meeting: MeetingInfo) -> str:
         parts.append("")
 
     if meeting.action_items:
-        parts.append("## 待办事项")
+        parts.append(f"## {labels['actions']}")
         parts.append("")
-        parts.append("| # | 任务 | 责任人 | 截止日期 |")
+        parts.append(f"| # | {labels['task']} | {labels['owner']} | {labels['deadline']} |")
         parts.append("|---|------|--------|----------|")
         for k, item in enumerate(meeting.action_items, 1):
-            task = item.get("task", "待确认")
-            owner = item.get("owner", "待分配")
-            deadline = item.get("deadline", "待确认")
+            task = item.get("task", tbd)
+            owner = item.get("owner", unassigned)
+            deadline = item.get("deadline", tbd)
             parts.append(f"| {k} | {task} | {owner} | {deadline} |")
         parts.append("")
 
     parts.append("---")
     parts.append("")
-    parts.append("> 本纪要由 AI 辅助整理，如有遗漏或误述请参会人员及时修正。")
+    parts.append(labels["footer"])
 
     return "\n".join(parts)
 
@@ -368,7 +395,7 @@ if __name__ == "__main__":
         if idx + 1 < len(sys.argv):
             output_file = sys.argv[idx + 1]
 
-    input_path = _validate_path(input_file)
+    input_path = Path(input_file).resolve()
     if input_path.suffix.lower() not in ALLOWED_EXTENSIONS:
         print(f"错误: 不支持的文件格式 {input_path.suffix}，仅支持 {', '.join(ALLOWED_EXTENSIONS)}")
         sys.exit(1)
