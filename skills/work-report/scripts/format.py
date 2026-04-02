@@ -16,6 +16,9 @@ from datetime import datetime, timedelta
 def _detect_language(content: str) -> str:
     """检测文本语言。
 
+    全文字符级统计：中文字符数 vs 英文字母数。
+    字符级统计比行级统计更稳定，不受短行（如 API、CI）影响。
+
     Args:
         content: 输入文本
 
@@ -423,8 +426,8 @@ if __name__ == "__main__":
         if input_path.suffix.lower() in ALLOWED_EXTENSIONS:
             content = input_path.read_text(encoding="utf-8")
         else:
-            print(f"警告: 不支持的文件格式 '{input_path.suffix}'，仅支持 {', '.join(ALLOWED_EXTENSIONS)}，将作为文本处理", file=sys.stderr)
-            content = input_text
+            print(f"错误: 不支持的文件格式 '{input_path.suffix}'，仅支持 {', '.join(ALLOWED_EXTENSIONS)}", file=sys.stderr)
+            sys.exit(1)
     else:
         content = input_text
 

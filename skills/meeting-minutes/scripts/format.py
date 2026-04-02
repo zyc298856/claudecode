@@ -300,7 +300,10 @@ def generate_markdown(meeting: MeetingInfo) -> str:
 
     cn_nums = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
     for i, topic in enumerate(meeting.topics):
-        num = cn_nums[i] if i < len(cn_nums) else str(i + 1)
+        if en:
+            num = str(i + 1)
+        else:
+            num = cn_nums[i] if i < len(cn_nums) else str(i + 1)
         parts.append(f"## {labels['topic']}{num}：{topic.get('title', labels['unnamed'])}")
         parts.append("")
 
