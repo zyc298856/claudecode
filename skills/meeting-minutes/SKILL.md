@@ -1,29 +1,7 @@
 ---
 name: meeting-minutes
-version: "1.0.0"
-description: |
-  将会议录音转写文本或纯文本会议记录整理为结构化的 Markdown 会议纪要。
-  自动识别输入格式（纯文本、SRT、VTT），提取参会人、议题、讨论要点、决议和待办事项。
-
-  触发场景：
-  - 用户说"整理会议记录"、"生成会议纪要"、"总结会议"、"帮我写会议纪要"
-  - 用户说"meeting minutes"、"summarize meeting"、"generate minutes"
-  - 用户提供 SRT/VTT 字幕文件或纯文本会议内容，要求整理
-  - 用户粘贴会议聊天记录、Zoom/Teams/飞书/钉钉转写文本
-
-  不适用场景：
-  - 创作虚构的会议内容
-  - 翻译会议记录（请使用翻译工具）
-  - 撰写全新的会议议程（非纪要）
-metadata:
-  emoji: "📋"
-  platforms: ["openclaw"]
-  version: "1.0.0"
-  author: "丁雨薇"
-  tags: ["会议纪要", "transcription", "SRT", "VTT", "总结"]
-  requires:
-    bins:
-      - python
+description: 会议纪要生成技能，用于将会议录音转写文本或纯文本会议记录整理为结构化 Markdown 纪要。当用户说"整理会议记录"、"生成会议纪要"、"总结会议"、"meeting minutes"时触发。不可用于翻译会议记录或撰写全新议程。
+metadata: {"openclaw": {"emoji": "📋", "os": ["darwin", "linux", "win32"], "requires": {"bins": ["python"]}}}
 ---
 
 # 会议纪要生成器 (Meeting Minutes Generator)

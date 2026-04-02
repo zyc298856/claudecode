@@ -1,28 +1,7 @@
 ---
 name: work-report
-version: "1.0.0"
-description: |
-  将散乱的工作记录整理为结构化的日报或周报。
-  自动识别输入内容，生成分层清晰、重点突出的工作报告。
-
-  触发场景：
-  - 用户说"写周报"、"整理日报"、"帮我写工作汇报"、"生成本周报告"
-  - 用户粘贴了散乱的工作内容要求整理
-  - 用户说"weekly report"、"daily report"、"work summary"
-
-  不适用场景：
-  - 创作虚构工作报告
-  - 写简历或求职信
-  - 学术报告或论文
-metadata:
-  emoji: "📝"
-  platforms: ["openclaw"]
-  version: "1.0.0"
-  author: "丁雨薇"
-  tags: ["周报", "日报", "工作汇报", "工作总结", "report"]
-  requires:
-    bins:
-      - python
+description: 工作报告生成技能，用于将散乱的工作记录整理为结构化的日报或周报 Markdown 文档。当用户说"写周报"、"整理日报"、"帮我写工作汇报"、"weekly report"时触发。不可用于创作虚构报告或撰写简历求职信。
+metadata: {"openclaw": {"emoji": "📝", "os": ["darwin", "linux", "win32"], "requires": {"bins": ["python"]}}}
 ---
 
 # 工作报告生成器 (Work Report Generator)

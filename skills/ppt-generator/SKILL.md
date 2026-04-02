@@ -1,30 +1,7 @@
 ---
 name: ppt-generator
-version: "1.0.0"
-description: |
-  将文本内容或大纲转换为结构化的 Markdown 格式 PPT 大纲。
-  自动识别演示类型，生成逐页幻灯片结构、演讲者备注和设计建议。
-
-  触发场景：
-  - 用户说"做PPT"、"生成PPT大纲"、"帮我做演示文稿"、"PPT大纲"
-  - 用户说"make a PPT"、"generate slides"、"presentation outline"
-  - 用户提供一段文字要求转换为 PPT 结构
-  - 用户提供主题要求生成演示文稿大纲
-  - 用户说"汇报PPT"、"述职PPT"、"方案PPT"
-
-  不适用场景：
-  - 生成 .pptx 二进制文件（本 skill 仅输出 Markdown）
-  - 设计 PPT 模板或母版（非视觉设计工具）
-  - 插入图片、动画等非文本元素
-metadata:
-  emoji: "📊"
-  platforms: ["openclaw"]
-  version: "1.0.0"
-  author: "丁雨薇"
-  tags: ["PPT", "演示文稿", "slides", "汇报", "presentation", "大纲"]
-  requires:
-    bins:
-      - python
+description: PPT大纲生成技能，用于将文本内容或主题描述转换为结构化 Markdown 格式 PPT 大纲，自动识别演示类型并生成逐页幻灯片结构。当用户说"做PPT"、"生成PPT大纲"、"帮我做演示文稿"、"generate slides"时触发。不可用于生成 .pptx 文件或视觉设计。
+metadata: {"openclaw": {"emoji": "📊", "os": ["darwin", "linux", "win32"], "requires": {"bins": ["python"]}}}
 ---
 
 # PPT 大纲生成器 (PPT Outline Generator)
