@@ -13,13 +13,28 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 
 
-# 周报关键词
+def _detect_language(content: str) -> str:
+    """检测文本语言。
+
+    Args:
+        content: 输入文本
+
+    Returns:
+        "zh" 或 "en"
+    """
+    chinese_chars = len(re.findall(r"[\u4e00-\u9fff]", content))
+    english_chars = len(re.findall(r"[a-zA-Z]", content))
+    return "zh" if chinese_chars > english_chars else "en"
+
+
+# 周报关键词（week 使用 \b 词边界匹配，避免 weekend/weekday 误命中）
 WEEKLY_KEYWORDS = [
     "周报", "本周", "这周", "上周", "一周", "weekly",
     "周一", "周二", "周三", "周四", "周五", "周六", "周日",
     "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
-    "Saturday", "Sunday", "week",
+    "Saturday", "Sunday",
 ]
+WEEKLY_PATTERNS = [r"\bweek\b"]  # 需要词边界匹配的英文关键词
 
 # 日报关键词
 DAILY_KEYWORDS = [
@@ -59,6 +74,7 @@ def detect_report_type(content: str, explicit_type: str = "") -> str:
     text = content.lower()
 
     weekly_score = sum(1 for kw in WEEKLY_KEYWORDS if kw.lower() in text)
+    weekly_score += sum(1 for pat in WEEKLY_PATTERNS if re.search(pat, text))
     daily_score = sum(1 for kw in DAILY_KEYWORDS if kw.lower() in text)
 
     if weekly_score > daily_score:
@@ -401,17 +417,27 @@ if __name__ == "__main__":
 
     # 检查输入是否为文件路径
     input_path = Path(input_text)
-    if input_path.exists() and input_path.suffix.lower() in ALLOWED_EXTENSIONS:
-        content = input_path.read_text(encoding="utf-8")
+    if input_path.exists():
+        if input_path.suffix.lower() in ALLOWED_EXTENSIONS:
+            content = input_path.read_text(encoding="utf-8")
+        else:
+            print(f"警告: 不支持的文件格式 '{input_path.suffix}'，仅支持 {', '.join(ALLOWED_EXTENSIONS)}，将作为文本处理", file=sys.stderr)
+            content = input_text
     else:
         content = input_text
 
+    if not content.strip():
+        print("错误: 输入内容为空，请提供工作记录文本或文件路径。", file=sys.stderr)
+        sys.exit(1)
+
     detected_type = detect_report_type(content, report_type)
     processed = preprocess_text(content)
+    lang = _detect_language(content)
 
     report = ReportInfo(
         report_type=detected_type,
-        items=[{"description": line.lstrip("- ")} for line in processed.split("\n") if line.strip()],
+        lang=lang,
+        items=[{"description": re.sub(r"^[\-\*]\s+", "", line)} for line in processed.split("\n") if line.strip()],
     )
 
     if detected_type == "daily":
