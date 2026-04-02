@@ -298,8 +298,10 @@ def generate_markdown(meeting: MeetingInfo) -> str:
         "---",
     ]
 
-    for i, topic in enumerate(meeting.topics, 1):
-        parts.append(f"## {labels['topic']}{i}：{topic.get('title', labels['unnamed'])}")
+    cn_nums = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
+    for i, topic in enumerate(meeting.topics):
+        num = cn_nums[i] if i < len(cn_nums) else str(i + 1)
+        parts.append(f"## {labels['topic']}{num}：{topic.get('title', labels['unnamed'])}")
         parts.append("")
 
         if topic.get("discussion"):
@@ -330,9 +332,9 @@ def generate_markdown(meeting: MeetingInfo) -> str:
             deadline = item.get("deadline", tbd)
             parts.append(f"| {k} | {task} | {owner} | {deadline} |")
         parts.append("")
+        parts.append("---")
+        parts.append("")
 
-    parts.append("---")
-    parts.append("")
     parts.append(labels["footer"])
 
     return "\n".join(parts)

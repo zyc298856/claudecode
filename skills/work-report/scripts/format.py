@@ -309,9 +309,9 @@ def generate_weekly_markdown(report: ReportInfo) -> str:
         parts.append("")
 
     # 问题与风险
+    parts.append(f"## {labels['risks']}")
+    parts.append("")
     if report.problems:
-        parts.append(f"## {labels['risks']}")
-        parts.append("")
         parts.append(f"| # | {labels['problem']} | {labels['impact']} | {labels['status']} |")
         parts.append("|---|---------|---------|---------|")
         for i, problem in enumerate(report.problems, 1):
@@ -324,7 +324,9 @@ def generate_weekly_markdown(report: ReportInfo) -> str:
                 impact = labels["assess"]
                 status = labels["in_progress"]
             parts.append(f"| {i} | {desc} | {impact} | {status} |")
-        parts.append("")
+    else:
+        parts.append("- " + ("None" if en else "无"))
+    parts.append("")
 
     # 下周计划
     parts.append(f"## {labels['next_plans']}")
