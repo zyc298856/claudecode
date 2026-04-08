@@ -1,7 +1,7 @@
 ---
 name: meeting-minutes
 description: 会议纪要生成技能，用于将会议录音转写文本或纯文本会议记录整理为结构化 Markdown 纪要。当用户说"整理会议记录"、"生成会议纪要"、"总结会议"、"meeting minutes"时触发。不可用于翻译会议记录或撰写全新议程。
-metadata: {"openclaw": {"emoji": "📋", "os": ["darwin", "linux", "win32"], "requires": {"bins": ["python"]}}}
+metadata: {"openclaw": {"emoji": "📋", "os": ["darwin", "linux", "win32"], "requires": {"bins": ["python"]}}, "tags": ["会议纪要", "会议记录", "会议总结", "SRT", "meeting"], "version": "1.0.0", "author": "Tony朱"}
 ---
 
 # 会议纪要生成器 (Meeting Minutes Generator)

@@ -368,17 +368,18 @@ def _validate_path(file_path: str, allowed_dir: str = ".") -> Path:
     return resolved
 
 
-def save_markdown(content: str, output_path: str) -> str:
+def save_markdown(content: str, output_path: str, allowed_dir: str = ".") -> str:
     """将内容保存为 Markdown 文件。
 
     Args:
         content: Markdown 内容
         output_path: 输出文件路径
+        allowed_dir: 允许的根目录，默认为当前工作目录
 
     Returns:
         保存的文件绝对路径
     """
-    path = _validate_path(output_path)
+    path = _validate_path(output_path, allowed_dir)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     return str(path)
