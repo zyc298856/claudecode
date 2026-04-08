@@ -111,108 +111,6 @@ def preprocess_text(content: str) -> str:
     return content.strip()
 
 
-# ---- 微信聊天记录解析 ----
-
-_WECHAT_MSG_HEADER = re.compile(
-    r"^((?:\[.*?\])?[\u4e00-\u9fffA-Za-z][\u4e00-\u9fffA-Za-z0-9_\-\.\(\)（）\s]{0,28}?)\s+(\d{1,2}:\d{2}(?::\d{2})?)\s*$"
-)
-_WECHAT_DATE_HEADER = re.compile(r"^\d{4}年\d{1,2}月\d{1,2}日")
-# 仅匹配微信已知系统消息，避免误杀 [搜索模块] 等正常工作内容
-_WECHAT_MEDIA = re.compile(
-    r"^\[(图片|语音|视频|文件|表情|链接|位置|名片|小程序|聊天记录|红包|转账|拍一拍)\]$"
-)
-_WECHAT_NOISE = re.compile(
-    r"(撤回了一条消息$|加入了群聊$|修改群名为|^你添加了|^现在可以开始)"
-)
-
-
-def detect_wechat(content: str) -> bool:
-    """检测输入是否为微信聊天记录格式。
-
-    判定条件：
-    1. 至少 2 行匹配 "发言人 HH:MM" 模式
-    2. 消息头之后存在非空内容行（排除纯时间戳日志如 "API 10:30"）
-
-    Args:
-        content: 输入文本
-
-    Returns:
-        True 表示为微信聊天记录格式
-    """
-    lines = content.strip().split("\n")
-    header_count = 0
-    has_content_after_header = False
-    for i, line in enumerate(lines[:50]):
-        stripped = line.strip()
-        if _WECHAT_MSG_HEADER.match(stripped):
-            header_count += 1
-            # 检查消息头后是否有内容行（非空、非消息头、非日期行）
-            for j in range(i + 1, min(i + 3, len(lines))):
-                next_line = lines[j].strip()
-                if not next_line:
-                    continue
-                if (not _WECHAT_MSG_HEADER.match(next_line)
-                        and not _WECHAT_DATE_HEADER.match(next_line)):
-                    has_content_after_header = True
-                break
-    return header_count >= 2 and has_content_after_header
-
-
-def parse_wechat(content: str) -> str:
-    """解析微信聊天记录，提取有效工作内容。
-
-    过滤系统消息（撤回、加群、红包等），合并同一发言人的连续消息，
-    输出为 "发言人：消息内容" 格式的结构化文本。
-
-    Args:
-        content: 微信聊天记录原始文本
-
-    Returns:
-        结构化的对话文本
-    """
-    lines = content.strip().split("\n")
-    messages = []
-    current_speaker = ""
-    current_parts = []
-
-    for line in lines:
-        stripped = line.strip()
-        if not stripped:
-            continue
-        # 跳过日期行，同时 flush 当前发言人消息（避免跨天合并）
-        if _WECHAT_DATE_HEADER.match(stripped):
-            if current_speaker and current_parts:
-                messages.append(f"{current_speaker}：{' '.join(current_parts)}")
-            current_speaker = ""
-            current_parts = []
-            continue
-        # 检测消息头：发言人 时间
-        match = _WECHAT_MSG_HEADER.match(stripped)
-        if match:
-            new_speaker = match.group(1)
-            # 同一发言人连续消息：合并，不 flush
-            if new_speaker == current_speaker:
-                continue
-            # 不同发言人：保存上一个发言人的消息
-            if current_speaker and current_parts:
-                messages.append(f"{current_speaker}：{' '.join(current_parts)}")
-            current_speaker = new_speaker
-            current_parts = []
-            continue
-        # 过滤系统噪音（媒体标记 + 系统通知）
-        if _WECHAT_MEDIA.match(stripped) or _WECHAT_NOISE.search(stripped):
-            continue
-        # 累积消息内容
-        if current_speaker:
-            current_parts.append(stripped)
-
-    # 保存最后一个发言人的消息
-    if current_speaker and current_parts:
-        messages.append(f"{current_speaker}：{' '.join(current_parts)}")
-
-    return "\n".join(messages)
-
-
 def _get_date_label(report_type: str, lang: str = "zh") -> str:
     """获取日期标签字符串。
 
@@ -538,9 +436,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     detected_type = detect_report_type(content, report_type)
-    # 自动检测并解析微信聊天记录格式
-    if detect_wechat(content):
-        content = parse_wechat(content)
     processed = preprocess_text(content)
     lang = _detect_language(content)
 
