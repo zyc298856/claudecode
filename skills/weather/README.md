@@ -57,6 +57,6 @@ weather/
 └── README.md          # This file
 ```
 
-## Source
+## Author
 
-Installed from [ClawHub](https://clawhub.ai) — `npx clawhub@latest install weather`
+Tony朱

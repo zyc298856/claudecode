@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "type": "skill",
+  "name": "weather",
+  "name_cn": "天气查询",
+  "description": "天气查询技能，用于获取任意城市的当前天气和未来天气预报。无需 API Key，基于 wttr.in 和 Open-Meteo 免费服务。",
+  "tags": [
+    "天气",
+    "天气预报",
+    "生活工具"
+  ],
+  "version": "1.0.0",
+  "author": "Tony朱"
+}
