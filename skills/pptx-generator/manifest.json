@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "type": "skill",
+  "name": "pptx-generator",
+  "name_cn": "PPT生成器",
+  "description": "从零创建专业 PowerPoint 演示文稿，支持封面、目录、内容页、分节页、总结页。也可编辑现有 PPTX 文件和提取文本内容。",
+  "tags": [
+    "PPT",
+    "演示文稿",
+    "办公效率"
+  ],
+  "version": "1.0.0",
+  "author": "MiniMax"
+}
