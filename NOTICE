@@ -1,0 +1,21 @@
+Third-Party Attributions
+========================
+
+This project includes skills adapted from third-party sources.
+Original licenses and terms apply as described below.
+
+pptx-generator
+--------------
+Original source: https://github.com/MiniMax-AI/skills
+License: MIT License (per upstream repository)
+Upstream copyright notice: "Copyright (c) 2026 MiniMax"
+Changes: Added manifest.json, README.md for AI Store Skill广场 compatibility.
+         Original SKILL.md and references/ adapted from upstream.
+
+weather
+-------
+Original source: ClawHub (https://clawhub.ai/steipete/weather)
+Author: steipete (Peter Steinberger)
+License: MIT-0 (all ClawHub skills are MIT-0 per https://github.com/openclaw/clawhub/blob/main/docs/skill-format.md)
+Changes: Added manifest.json, README.md for AI Store Skill广场 compatibility.
+         Original ClawHub metadata (.clawhub/, _meta.json) preserved as-is.

@@ -10,5 +10,7 @@
     "生活工具"
   ],
   "version": "1.0.0",
-  "author": "ClawHub"
+  "author": "steipete",
+  "license": "MIT-0",
+  "source": "https://clawhub.ai/steipete/weather"
 }

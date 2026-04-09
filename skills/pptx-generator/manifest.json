@@ -10,5 +10,7 @@
     "办公效率"
   ],
   "version": "1.0.0",
-  "author": "MiniMax"
+  "author": "MiniMax",
+  "license": "MIT",
+  "source": "https://github.com/MiniMax-AI/skills"
 }

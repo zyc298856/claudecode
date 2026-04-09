@@ -1,8 +1,10 @@
 ---
 name: pptx-generator
 description: PPT生成技能，用于从零创建专业 PowerPoint 演示文稿（封面、目录、内容页、分节页、总结页），也支持编辑现有 PPTX 文件和提取文本。当用户说"做PPT"、"生成PPT"、"帮我做演示文稿"、"create presentation"时触发。不可用于纯 Markdown 大纲输出或视觉设计排版。
-metadata: {"openclaw": {"emoji": "📊", "os": ["darwin", "linux", "win32"], "requires": {"bins": ["node", "python3"]}}, "tags": ["PPT", "演示文稿", "PowerPoint", "幻灯片", "presentation"], "version": "1.0.0", "author": "MiniMax"}
+metadata: {"openclaw": {"emoji": "📊", "os": ["darwin", "linux", "win32"], "requires": {"bins": ["node", "python3"]}}, "tags": ["PPT", "演示文稿", "PowerPoint", "幻灯片", "presentation"], "version": "1.0.0", "author": "MiniMax", "license": "MIT", "source": "https://github.com/MiniMax-AI/skills"}
 ---
+
+<!-- Original work Copyright (c) 2026 MiniMax. Licensed under the MIT License. -->
 
 # PPTX Generator & Editor
 
