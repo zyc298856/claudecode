@@ -57,6 +57,6 @@ weather/
 └── README.md          # This file
 ```
 
-## Author
+## Source
 
-Tony朱
+Original skill from [ClawHub](https://clawhub.ai). Adapted for AI Store Skill广场.

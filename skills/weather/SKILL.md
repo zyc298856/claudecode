@@ -1,7 +1,7 @@
 ---
 name: weather
 description: 天气查询技能，用于获取任意城市的当前天气和未来天气预报。当用户说"查天气"、"今天天气怎么样"、"weather"、"forecast"时触发。不可用于气象数据采集或历史气候分析。
-metadata: {"openclaw": {"emoji": "🌤️", "os": ["darwin", "linux", "win32"], "requires": {"bins": ["curl"]}}, "tags": ["天气", "天气预报", "weather", "forecast"], "version": "1.0.0", "author": "Tony朱"}
+metadata: {"openclaw": {"emoji": "🌤️", "os": ["darwin", "linux", "win32"], "requires": {"bins": ["curl"]}}, "tags": ["天气", "天气预报", "weather", "forecast"], "version": "1.0.0", "author": "ClawHub"}
 ---
 
 # Weather
